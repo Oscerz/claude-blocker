@@ -59,6 +59,23 @@ npx claude-blocker --remove
 npx claude-blocker --help
 ```
 
+### Google Cloud Shell Developer Connect
+
+When using Claude Code in Google Cloud Shell Developer Connect or other remote environments, you'll need to configure the server URL via an environment variable:
+
+```bash
+# Set the server URL (replace with your actual Cloud Shell URL)
+export CLAUDE_BLOCKER_URL=https://8765-cs-xxxxxxxxx.cloudshell.dev
+
+# Then run setup to configure hooks with the custom URL
+npx claude-blocker --setup
+
+# Start the server
+npx claude-blocker
+```
+
+The hooks will use the `CLAUDE_BLOCKER_URL` environment variable if set, otherwise they default to `http://localhost:8765`.
+
 ## Features
 
 - **Soft blocking** — Sites show a modal overlay, not a hard block

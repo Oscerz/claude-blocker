@@ -1,14 +1,21 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
-import { DEFAULT_PORT } from "@claude-blocker/shared";
+import { DEFAULT_PORT } from "./types.js";
 
 interface ClaudeSettings {
   hooks?: Record<string, unknown[]>;
   [key: string]: unknown;
 }
 
-const HOOK_COMMAND = `curl -s -X POST http://localhost:${DEFAULT_PORT}/hook -H 'Content-Type: application/json' -d "$(cat)" > /dev/null 2>&1 &`;
+// Use environment variable for server URL if provided, otherwise default to localhost
+// This allows the server to work in remote environments like Google Cloud Shell Developer Connect
+const getHookCommand = (): string => {
+  const serverUrl = process.env.CLAUDE_BLOCKER_URL || `http://localhost:${DEFAULT_PORT}`;
+  return `curl -s -X POST ${serverUrl}/hook -H 'Content-Type: application/json' -d "$(cat)" > /dev/null 2>&1 &`;
+};
+
+const HOOK_COMMAND = getHookCommand();
 
 const HOOKS_CONFIG = {
   UserPromptSubmit: [
@@ -96,6 +103,15 @@ export function setupHooks(): void {
   // Write settings
   writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
 
+  // Display server URL info if custom URL is set
+  const customUrl = process.env.CLAUDE_BLOCKER_URL;
+  const serverUrlLines = customUrl
+    ? `│   Server URL: ${customUrl.substring(0, 40).padEnd(40)} │
+│   (from CLAUDE_BLOCKER_URL env var)             │
+│                                                 │
+`
+    : "";
+
   console.log(`
 ┌─────────────────────────────────────────────────┐
 │                                                 │
@@ -104,7 +120,7 @@ export function setupHooks(): void {
 │   Hooks configured in:                          │
 │   ${settingsPath}
 │                                                 │
-│   Configured hooks:                             │
+${serverUrlLines}│   Configured hooks:                             │
 │   - UserPromptSubmit (work starting)            │
 │   - PreToolUse (tool executing)                 │
 │   - Stop (work finished)                        │
