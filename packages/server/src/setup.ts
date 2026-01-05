@@ -103,9 +103,10 @@ export function setupHooks(): void {
   // Write settings
   writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
 
-  const serverUrl = process.env.CLAUDE_BLOCKER_URL || `http://localhost:${DEFAULT_PORT}`;
-  const serverUrlLines = process.env.CLAUDE_BLOCKER_URL 
-    ? `│   Server URL: ${serverUrl.padEnd(29)} │
+  // Display server URL info if custom URL is set
+  const customUrl = process.env.CLAUDE_BLOCKER_URL;
+  const serverUrlLines = customUrl
+    ? `│   Server URL: ${customUrl.substring(0, 40).padEnd(40)} │
 │   (from CLAUDE_BLOCKER_URL env var)             │
 │                                                 │
 `
