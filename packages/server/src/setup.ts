@@ -104,8 +104,11 @@ export function setupHooks(): void {
   writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
 
   const serverUrl = process.env.CLAUDE_BLOCKER_URL || `http://localhost:${DEFAULT_PORT}`;
-  const serverUrlInfo = process.env.CLAUDE_BLOCKER_URL 
-    ? `│   Server URL: ${serverUrl.padEnd(29)} │\n│   (from CLAUDE_BLOCKER_URL env var)        │\n│                                                 │`
+  const serverUrlLines = process.env.CLAUDE_BLOCKER_URL 
+    ? `│   Server URL: ${serverUrl.padEnd(29)} │
+│   (from CLAUDE_BLOCKER_URL env var)             │
+│                                                 │
+`
     : "";
 
   console.log(`
@@ -116,7 +119,7 @@ export function setupHooks(): void {
 │   Hooks configured in:                          │
 │   ${settingsPath}
 │                                                 │
-${serverUrlInfo}│   Configured hooks:                             │
+${serverUrlLines}│   Configured hooks:                             │
 │   - UserPromptSubmit (work starting)            │
 │   - PreToolUse (tool executing)                 │
 │   - Stop (work finished)                        │
