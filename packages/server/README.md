@@ -38,6 +38,23 @@ npx claude-blocker --remove
 npx claude-blocker --help
 ```
 
+### Google Cloud Shell Developer Connect
+
+When running in remote environments like Google Cloud Shell Developer Connect, configure the server URL before setup:
+
+```bash
+# Export the server URL (replace with your Cloud Shell forwarded URL)
+export CLAUDE_BLOCKER_URL=https://8765-cs-xxxxxxxxx.cloudshell.dev
+
+# Run setup - hooks will use the custom URL
+npx claude-blocker --setup
+
+# Start the server
+npx claude-blocker
+```
+
+**Important:** The `CLAUDE_BLOCKER_URL` environment variable must be set **before** running `--setup` so the hooks are configured with the correct URL. If you change the URL later, you'll need to run `--remove` and then `--setup` again.
+
 ## How It Works
 
 1. **Hooks** — The `--setup` command adds hooks to `~/.claude/settings.json` that notify the server when:
